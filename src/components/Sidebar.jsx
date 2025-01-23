@@ -21,13 +21,13 @@ const Sidebar = ({ isOpen, isCollapsed, setIsCollapsed }) => {
 
   return (
     <aside
-      className={`bg-gray-800 px-2 py-1 text-white fixed top-16 left-0 h-screen transition-all duration-300 ${isOpen ? (isCollapsed ? 'w-16' : 'w-48') : 'hidden'}`}
+      className={`bg-gray-800 px-4 py-2 text-white fixed top-10 left-0 h-screen transition-all duration-300 ${isOpen ? (isCollapsed ? 'w-16' : 'w-48') : 'hidden'}`}
     >
       {/* Collapse Button */}
       {isOpen && (
         <button
           onClick={() => setIsCollapsed(!isCollapsed)}
-          className="flex items-center justify-center my-2 p-1 mb-6 w-full"
+          className="flex items-center justify-end my-2 p-1 mb-6 w-full"
         >
           {isCollapsed ? <LuMenu size={20} /> : <RxCross2 size={20} />}
         </button>
@@ -38,7 +38,7 @@ const Sidebar = ({ isOpen, isCollapsed, setIsCollapsed }) => {
         {menuItems.map((item, index) => (
           <div
             key={index}
-            className="flex items-center text-sm hover:bg-zinc-100 hover:text-black rounded p-2 my-1"
+            className="flex items-center text-sm hover:bg-zinc-100 hover:text-black rounded p-2 my-3 cursor-pointer"
           >
             <span className="mr-3">{item.icon}</span>
             {!isCollapsed && <span>{item.label}</span>}

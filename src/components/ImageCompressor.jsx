@@ -15,7 +15,7 @@ import ImagePannel from "./ImagePannel";
 
 const ImageCompressor = () => {
   const [isOpen, setIsOpen] = useState(true); 
-  const [isCollapsed, setIsCollapsed] = useState(true); 
+  const [isCollapsed, setIsCollapsed] = useState(false); 
 
   const menuItems = [
     { icon: <SiConvertio />, label: "Image Convert" },

@@ -182,20 +182,22 @@ const ImagePannel = () => {
   };
 
   return (
-    <div className="w-full flex gap-3">
+    
+    <div className="w-full flex gap-3 mt-7">
       {/* Left Sidebar */}
       <div>
-        <div className="w-full md:w-72 bg-white rounded-lg p-4 shadow-lg">
+        <div className="w-full md:w-72 bg-white rounded-sm p-4 shadow-sm">
           <h2 className="text-xl font-semibold mb-6">Resizing Options</h2>
 
           {/* Width/Height Controls */}
           <div className="grid grid-cols-2 gap-4 mb-5">
             <div>
-              <label className="block text-gray-600 mb-1">Width:</label>
+              <label className="block text-gray-600 mb-1 ">Width:</label>
               <input
                 type="number"
-                value={Math.round(crop.width) || 0}
-                className="w-full p-2 border rounded"
+                value={crop.width ? Math.round(crop.width) : ""}
+
+                className="w-full p-2 border rounded outline-none "
                 onChange={handleWidthChange}
               />
             </div>
@@ -203,8 +205,9 @@ const ImagePannel = () => {
               <label className="block text-gray-600 mb-1">Height:</label>
               <input
                 type="number"
-                value={Math.round(crop.height) || 0}
-                className="w-full p-2 border rounded"
+                value={crop.height ? Math.round(crop.height) : ""}
+                
+                className="w-full p-2 border rounded outline-none"
                 onChange={handleHeightChange}
               />
             </div>
@@ -214,7 +217,7 @@ const ImagePannel = () => {
           <div className="mb-7">
             <label className="block text-gray-600 mb-1">Crop Option:</label>
             <select
-              className="w-full p-2 border rounded"
+              className="w-full p-2 border rounded outline-none"
               value={cropOption}
               onChange={(e) => handleCropOptionChange(e.target.value)}
             >
@@ -235,7 +238,7 @@ const ImagePannel = () => {
                 <input
                   type="number"
                   value={Math.round(crop.x) || 0}
-                  className="w-full p-2 border rounded"
+                  className="w-full p-2 border rounded outline-none"
                   onChange={handlePositionXChange}
                 />
               </div>
@@ -244,7 +247,7 @@ const ImagePannel = () => {
                 <input
                   type="number"
                   value={Math.round(crop.y) || 0}
-                  className="w-full p-2 border rounded"
+                  className="w-full p-2 border rounded outline-none"
                   onChange={handlePositionYChange}
                 />
               </div>
@@ -283,7 +286,7 @@ const ImagePannel = () => {
                   ref={imgRef}
                   src={image}
                   alt="Preview"
-                  style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain" }}
+                  style={{ maxWidth: "300px", maxHeight: "100%", objectFit: "contain" }}
                 />
               </ReactCrop>
             ) : (
@@ -302,31 +305,31 @@ const ImagePannel = () => {
           {/* Action Buttons */}
           <div className="flex justify-center gap-8 mt-4">
             <button
-              className="flex flex-col items-center gap-1 text-gray-600 hover:text-blue-500"
+              className="flex flex-col items-center gap-1 text-gray-700 hover:text-white bg-blue-100 hover:bg-blue-500 px-5 py-1 rounded-md border border-gray-300 shadow-sm transition-all duration-200 ease-in-out"
               onClick={handleCrop}
             >
               <span>Crop</span>
             </button>
             <button
-              className="flex flex-col items-center gap-1 text-gray-600 hover:text-blue-500"
+              className="flex flex-col items-center gap-1 text-gray-700 hover:text-white bg-blue-100 hover:bg-blue-500 px-5 py-1 rounded-md border border-gray-300 shadow-sm transition-all duration-200 ease-in-out"
               onClick={handleUndo}
             >
               <span>Undo</span>
             </button>
             <button
-              className="flex flex-col items-center gap-1 text-gray-600 hover:text-blue-500"
+             className="flex flex-col items-center gap-1 text-gray-700 hover:text-white bg-blue-100 hover:bg-blue-500 px-5 py-1 rounded-md border border-gray-300 shadow-sm transition-all duration-200 ease-in-out"
               onClick={handleRedo}
             >
               <span>Redo</span>
             </button>
             <button
-              className="flex flex-col items-center gap-1 text-gray-600 hover:text-blue-500"
+              className="flex flex-col items-center gap-1 text-gray-700 hover:text-white bg-blue-100 hover:bg-blue-500 px-5 py-1 rounded-md border border-gray-300 shadow-sm transition-all duration-200 ease-in-out"
               onClick={handleReset}
             >
               <span>Reset</span>
             </button>
             <button
-              className="flex flex-col items-center gap-1 text-gray-600 hover:text-blue-500"
+              className="flex flex-col items-center gap-1 text-gray-700 hover:text-white bg-blue-100 hover:bg-blue-500 px-5 py-1 rounded-md border border-gray-300 shadow-sm transition-all duration-200 ease-in-out"
               onClick={handleSave}
             >
               <span>Save</span>
