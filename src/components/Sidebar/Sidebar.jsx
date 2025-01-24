@@ -7,21 +7,24 @@ import { IoMdResize } from "react-icons/io";
 import { LuCrop, LuMenu } from "react-icons/lu";
 import { PiFlipHorizontalFill } from "react-icons/pi";
 import { MdRotate90DegreesCw } from "react-icons/md";
+import { Link } from "react-router-dom";
 
 const Sidebar = ({ isOpen, isCollapsed, setIsCollapsed }) => {
   const menuItems = [
-    { icon: <SiConvertio />, label: "Image Convert" },
-    { icon: <IoInvertModeOutline />, label: "Black/White" },
-    { icon: <IoMdResize />, label: "Image Resize" },
-    { icon: <LuCrop />, label: "Image Crop" },
-    { icon: <PiFlipHorizontalFill />, label: "Image Flip" },
-    { icon: <MdRotate90DegreesCw />, label: "Image Rotate" },
-    { icon: <MdOutlineInvertColors />, label: "Image Invert" },
+    { icon: <SiConvertio />, label: "Image Convert", link: "/" },
+    { icon: <IoInvertModeOutline />, label: "Black/White", link: "/black-n-white" },
+    { icon: <IoMdResize />, label: "Image Resize", link: "/resize" },
+    { icon: <LuCrop />, label: "Image Crop", link: "/crop" },
+    { icon: <PiFlipHorizontalFill />, label: "Image Flip", link: "/flip" },
+    { icon: <MdRotate90DegreesCw />, label: "Image Rotate", link: "/rotate" },
+    { icon: <MdOutlineInvertColors />, label: "Image Invert", link: "/invert" },
   ];
 
   return (
     <aside
-      className={`bg-gray-800 px-4 py-2 text-white fixed top-10 left-0 h-screen transition-all duration-300 ${isOpen ? (isCollapsed ? 'w-16' : 'w-48') : 'hidden'}`}
+      className={`bg-gray-800 px-4 py-2 text-white fixed top-10 left-0 h-screen transition-all duration-300 ${
+        isOpen ? (isCollapsed ? "w-16" : "w-48") : "hidden"
+      }`}
     >
       {/* Collapse Button */}
       {isOpen && (
@@ -36,13 +39,19 @@ const Sidebar = ({ isOpen, isCollapsed, setIsCollapsed }) => {
       {/* Menu Items */}
       <nav>
         {menuItems.map((item, index) => (
+
+<Link to={item.link}>
           <div
             key={index}
             className="flex items-center text-sm hover:bg-zinc-100 hover:text-black rounded p-2 my-3 cursor-pointer"
           >
-            <span className="mr-3">{item.icon}</span>
-            {!isCollapsed && <span>{item.label}</span>}
+            
+              <span className="mr-3">{item.icon}</span>
+           
+              {!isCollapsed && <span>{item.label}</span>}
+           
           </div>
+          </Link>
         ))}
       </nav>
     </aside>
