@@ -15,57 +15,71 @@ const ImagePannel = () => {
   const [future, setFuture] = useState([]);
   const imgRef = useRef(null);
 
-  // Validate crop values
-  const isValidCrop = (crop) => {
-    return (
-      typeof crop.x === 'number' &&
-      typeof crop.y === 'number' &&
-      typeof crop.width === 'number' &&
-      typeof crop.height === 'number' &&
-      !isNaN(crop.x) &&
-      !isNaN(crop.y) &&
-      !isNaN(crop.width) &&
-      !isNaN(crop.height)
-    );
-  };
-
-  // Handle image upload
-  const handleImageUpload = (event) => {
-    const file = event.target.files[0];
+  // Constrain crop to image boundaries
+  const constrainCrop = useCallback((newCrop) => {
+    const { width, height } = imageProperties;
     
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const img = new Image();
-        img.src = e.target.result;
-        img.onload = () => {
-          setOriginalImage(img.src);
-          setImage(img.src);
-          setImageProperties({
-            width: img.width,
-            height: img.height,
-            size: file.size,
-            type: file.type.split("/")[1].toUpperCase(),
-          });
-          
-          // Reset crop to full image dimensions
-          setCrop({
-            aspect: 5 / 4, 
-            width: img.width, 
-            height: img.height, 
-            x: 0, 
-            y: 0 
-          });
-          
-          setHistory([]);
-          setFuture([]);
-          setCroppedImage(null);
-        };
-      };
-      reader.readAsDataURL(file);
-    }
-  };
+    // Ensure crop doesn't exceed image boundaries
+    const constrainedCrop = {
+      ...newCrop,
+      // Constrain x position
+      x: Math.max(0, Math.min(newCrop.x, width - newCrop.width)),
+      // Constrain y position
+      y: Math.max(0, Math.min(newCrop.y, height - newCrop.height)),
+      // Ensure width and height don't exceed image dimensions
+      width: Math.min(newCrop.width, width - newCrop.x),
+      height: Math.min(newCrop.height, height - newCrop.y)
+    };
 
+    return constrainedCrop;
+  }, [imageProperties]);
+
+  // Safe set crop that always constrains crop
+  const safeSetCrop = useCallback((cropUpdate) => {
+    const updatedCrop = typeof cropUpdate === 'function' 
+      ? constrainCrop(cropUpdate(crop)) 
+      : constrainCrop(cropUpdate);
+    setCrop(updatedCrop);
+  }, [crop, constrainCrop]);
+
+  // Reset to initial state
+// Reset to initial state
+const resetToInitialState = useCallback(() => {
+  if (originalImage) {
+    const img = new Image();
+    img.src = originalImage;
+    img.onload = () => {
+      // Reset image
+      setImage(originalImage);
+
+      // Reset image properties
+      setImageProperties({
+        width: img.width,
+        height: img.height,
+        size: imageProperties.size,
+        type: imageProperties.type
+      });
+
+      // Reset crop to full image dimensions
+      safeSetCrop({
+        aspect: 5 / 4, 
+        width: img.width, 
+        height: (img.width * 4) / 5, 
+        x: 0, 
+        y: 0 
+      });
+
+
+      setCrop({ aspect: 5 / 4, width: 0, height: 0, x: 0, y: 0 })
+
+      // Clear history and future
+      setHistory([]);
+      setFuture([]);
+      setCroppedImage(null);
+      setCropOption("5:4");
+    };
+  }
+}, [originalImage, imageProperties, safeSetCrop]);
   // Get cropped image
   const getCroppedImg = useCallback((image, crop) => {
     if (!crop.width || !crop.height) {
@@ -94,6 +108,48 @@ const ImagePannel = () => {
     return canvas.toDataURL("image/jpeg");
   }, []);
 
+  // Handle image upload
+  const handleImageUpload = (event) => {
+    const file = event.target.files[0];
+    
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.src = e.target.result;
+        img.onload = () => {
+          // Set original and current image
+          setOriginalImage(img.src);
+          setImage(img.src);
+
+          // Set image properties
+          setImageProperties({
+            width: img.width,
+            height: img.height,
+            size: file.size,
+            type: file.type.split("/")[1].toUpperCase(),
+          });
+          
+          // Reset crop to full image dimensions
+          safeSetCrop({
+            aspect: 5 / 4, 
+            width: img.width, 
+            height: (img.width * 4) / 5, 
+            x: 0, 
+            y: 0 
+          });
+          
+          // Clear history and other states
+          setHistory([]);
+          setFuture([]);
+          setCroppedImage(null);
+          setCropOption("5:4");
+        };
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   // Handle crop completion
   const onCropComplete = useCallback((newCrop) => {
     if (imgRef.current && newCrop.width && newCrop.height) {
@@ -104,8 +160,10 @@ const ImagePannel = () => {
 
   // Handle crop option change
   const handleCropOptionChange = useCallback((option) => {
+    console.log("Before : ",option )
     setCropOption(option);
     const { width, height } = imageProperties;
+    console.log("after : ",width, height )
     let newCrop = { ...crop };
 
     switch (option) {
@@ -121,8 +179,8 @@ const ImagePannel = () => {
         break;
       case "1:1":
         newCrop.aspect = 1;
-        newCrop.width = Math.min(width, height);
-        newCrop.height = newCrop.width;
+newCrop.width = 50;
+newCrop.height = 50;
         break;
       case "9:16":
         newCrop.aspect = 9 / 16;
@@ -140,12 +198,10 @@ const ImagePannel = () => {
         newCrop.height = newCrop.width * (4/5);
     }
 
-    // Constrain x and y
-    newCrop.x = Math.max(0, Math.min(newCrop.x, width - newCrop.width));
-    newCrop.y = Math.max(0, Math.min(newCrop.y, height - newCrop.height));
-
-    setCrop(newCrop);
-  }, [crop, imageProperties]);
+    // Use constrainCrop to ensure crop stays within image boundaries
+safeSetCrop(newCrop);
+setCrop({ aspect: 5 / 4, width: 0, height: 0, x: 0, y: 0 })
+  }, [crop,  safeSetCrop]);
 
   // Handle width change
   const handleWidthChange = useCallback((e) => {
@@ -153,13 +209,13 @@ const ImagePannel = () => {
     const maxWidth = imageProperties.width - crop.x;
     
     if (!isNaN(newWidth)) {
-      setCrop(prev => ({
+      safeSetCrop(prev => ({
         ...prev, 
         width: Math.min(Math.max(newWidth, 0), maxWidth),
         height: newWidth / prev.aspect
       }));
     }
-  }, [crop.x, imageProperties, crop.aspect]);
+  }, [crop.x, imageProperties, crop.aspect, safeSetCrop]);
 
   // Handle height change
   const handleHeightChange = useCallback((e) => {
@@ -167,13 +223,13 @@ const ImagePannel = () => {
     const maxHeight = imageProperties.height - crop.y;
     
     if (!isNaN(newHeight)) {
-      setCrop(prev => ({
+      safeSetCrop(prev => ({
         ...prev, 
         height: Math.min(Math.max(newHeight, 0), maxHeight),
         width: newHeight * prev.aspect
       }));
     }
-  }, [crop.y, imageProperties, crop.aspect]);
+  }, [crop.y, imageProperties, crop.aspect, safeSetCrop]);
 
   // Handle position X change
   const handlePositionXChange = useCallback((e) => {
@@ -188,8 +244,11 @@ const ImagePannel = () => {
 
   // Handle position Y change
   const handlePositionYChange = useCallback((e) => {
+    console.log("value of e:",e)
     const newY = parseInt(e.target.value || 0, 10);
+    console.log("value of new y:",newY)
     const maxY = imageProperties.height - crop.height;
+    console.log("value of max y:",maxY)
     
     setCrop(prev => ({
       ...prev, 
@@ -205,9 +264,9 @@ const ImagePannel = () => {
       setImage(croppedImageUrl);
       setCroppedImage(croppedImageUrl);
       setFuture([]);
-      setCrop(prev => ({ ...prev, width: 0, height: 0, x: 0, y: 0 }));
+      safeSetCrop(prev => ({ ...prev, width: 0, height: 0, x: 0, y: 0 }));
     }
-  }, [image, crop, getCroppedImg]);
+  }, [image, crop, getCroppedImg, safeSetCrop]);
 
   // Handle undo action
   const handleUndo = useCallback(() => {
@@ -231,18 +290,8 @@ const ImagePannel = () => {
 
   // Handle reset action
   const handleReset = useCallback(() => {
-    setImage(originalImage);
-    setHistory([]);
-    setFuture([]);
-    setCroppedImage(null);
-    setCrop({
-      aspect: 5 / 4, 
-      width: imageProperties.width, 
-      height: (imageProperties.width * 4) / 5, 
-      x: 0, 
-      y: 0 
-    });
-  }, [originalImage, imageProperties]);
+    resetToInitialState();
+  }, [resetToInitialState]);
 
   // Handle save action
   const handleSave = useCallback(() => {
@@ -254,33 +303,29 @@ const ImagePannel = () => {
     }
   }, [croppedImage]);
 
-  // Log crop state for debugging
-  useEffect(() => {
-    // console.log("Crop State:", crop);
-  }, [crop]);
-
   return (
-    <div className="w-full flex gap-3 mt-7 h-screen">
-      <CropControls
-        crop={crop}
-        handleWidthChange={handleWidthChange}
-        handleHeightChange={handleHeightChange}
-        handlePositionXChange={handlePositionXChange}
-        handlePositionYChange={handlePositionYChange}
-        handleCropOptionChange={handleCropOptionChange}
-        cropOption={cropOption}
-        imageProperties={imageProperties}
-        formatFileSize={formatFileSize}
-        imageSrc={image}
-      />
-
-      <div className="flex-1">
-        <div className="h-full">
+    <div className="h-screen w-full">
+      <div className="w-full h-screen flex gap-3">
+        <div className="bg-white rounded-sm ml-1 shadow-sm h-screen w-[300px]">
+          <CropControls
+            crop={crop}
+            handleWidthChange={handleWidthChange}
+            handleHeightChange={handleHeightChange}
+            handlePositionXChange={handlePositionXChange}
+            handlePositionYChange={handlePositionYChange}
+            handleCropOptionChange={handleCropOptionChange}
+            cropOption={cropOption}
+            imageProperties={imageProperties}
+            formatFileSize={formatFileSize}
+            imageSrc={image}
+          />
+        </div>
+        <div className="h-[80%] w-[80%] max-h-full flex flex-col justify-center items-center">
           <ImageUpload 
             image={image}
             handleImageUpload={handleImageUpload}
             crop={crop}
-            setCrop={setCrop}
+            setCrop={safeSetCrop}
             onCropComplete={onCropComplete}
             imgRef={imgRef}
           />
