@@ -7,41 +7,44 @@ const ImageActions = ({ handleCrop, handleUndo, handleRedo, handleReset, handleS
   return (
     <div className="flex justify-center gap-8 mt-4">
       <button
-        className="flex  items-center gap-1 text-gray-700 hover:text-white bg-blue-100 hover:bg-blue-500 px-5 py-1 rounded-md border border-gray-300 shadow-sm transition-all duration-200 ease-in-out"
+        className="flex flex-col items-center gap-1 px-3 py-1 text-gray-700 transition duration-200 group cursor-pointer"
         onClick={handleCrop}
       >
-        <CiCrop />
-        <span>Crop</span>
+        <CiCrop className="text-2xl group-hover:text-gray-900 " />
+        <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-200">Crop</span>
       </button>
       <button
-        className="flex items-center gap-1 text-gray-700 hover:text-white bg-blue-100 hover:bg-blue-500 px-5 py-1 rounded-md border border-gray-300 shadow-sm transition-all duration-200 ease-in-out"
+        className="flex flex-col items-center gap-1 px-3 py-1 text-gray-700 transition duration-200 group cursor-pointer"
         onClick={handleUndo}
       >
-        <CiUndo />
-        <span>Undo</span>
+        <CiUndo className="text-2xl group-hover:text-gray-900 "  />
+        <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-200">Undo</span>
       </button>
       <button
-        className="flex  items-center gap-1 text-gray-700 hover:text-white bg-blue-100 hover:bg-blue-500 px-5 py-1 rounded-md border border-gray-300 shadow-sm transition-all duration-200 ease-in-out"
+        className="flex flex-col items-center gap-1 px-3 py-1 text-gray-700 transition duration-200 group cursor-pointer"
         onClick={handleRedo}
       >
-        <CiRedo />
-        <span>Redo</span>
+        <CiRedo className="text-2xl group-hover:text-gray-900 " />
+        <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-200">Redo</span>
       </button>
       <button
-        className="flex  items-center gap-1 text-gray-700 hover:text-white bg-blue-100 hover:bg-blue-500 px-5 py-1 rounded-md border border-gray-300 shadow-sm transition-all duration-200 ease-in-out"
+       className="flex flex-col items-center gap-1 px-3 py-1 text-gray-700 transition duration-200 group cursor-pointer"
         onClick={handleReset}
       >
-        <BiReset />
-        <span>Reset</span>
+        <BiReset className="text-2xl group-hover:text-gray-900 " />
+        <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-200">Reset</span>
       </button>
       <button
-        className="flex  items-center gap-1 text-gray-700 hover:text-white bg-blue-100 hover:bg-blue-500 px-5 py-1 rounded-md border border-gray-300 shadow-sm transition-all duration-200 ease-in-out"
-        onClick={handleSave}
-        disabled={!croppedImage}
-      >
-        <FaRegSave />
-        <span>Save</span>
-      </button>
+  className="flex flex-col items-center gap-1 px-3 py-1 text-gray-700 transition duration-200 group cursor-pointer"
+  onClick={handleSave}
+  disabled={!croppedImage}
+>
+  <FaRegSave className="text-2xl group-hover:text-gray-900 " />
+  <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+    Save
+  </span>
+</button>
+
     </div>
   );
 };

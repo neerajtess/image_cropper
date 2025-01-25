@@ -7,8 +7,7 @@ import BlackNwhite from "./pages/BlackNwhite/BlackNwhite";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 function App() {
-  const [isOpen, setIsOpen] = useState(true);
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false); // Only keep isCollapsed state
 
   return (
     <Router>
@@ -19,15 +18,15 @@ function App() {
         <div className="flex pt-12">
           {/* Sidebar */}
           <Sidebar
-            isOpen={isOpen}
             isCollapsed={isCollapsed}
             setIsCollapsed={setIsCollapsed}
           />
+
           {/* Main Content */}
           <main
-            className={`flex-1 ml-0 ${
-              isOpen ? (isCollapsed ? "ml-16" : "ml-52") : "ml-0"
-            } transition-all duration-300 p-4 md:p-2`}
+            className={`flex-1 ml-0   ${
+              isCollapsed ? "ml-16" : "ml-52" // Adjust margin based on isCollapsed
+            } transition-all duration-300 h-screen `}
           >
             <Routes>
               {/* Route for ImageCompressor */}
@@ -38,7 +37,7 @@ function App() {
             </Routes>
 
             {/* Advertisement */}
-            <Ads />
+            {/* <Ads /> */}
           </main>
         </div>
       </div>
