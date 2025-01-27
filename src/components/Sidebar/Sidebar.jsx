@@ -28,18 +28,18 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
 >
       {/* Collapse Button */}
       <button
-        onClick={() => setIsCollapsed(!isCollapsed)}
-        className="flex items-center justify-end my-2 p-1 mb-6 w-full hidden sm:block"
-        aria-label={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
-      >
-        {isCollapsed ? <LuMenu size={20} /> : <RxCross2 size={20} />}
-      </button>
+  onClick={() => setIsCollapsed(!isCollapsed)}
+ className="flex items-center justify-end my-2 p-1 mb-6 w-full"
+  aria-label={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
+>
+  {isCollapsed ? <LuMenu size={20} /> : <RxCross2 size={20} />}
+</button>
 
       {/* Menu Items */}
       <nav>
         {menuItems.map((item, index) => (
           <Link to={item.link} key={index}>
-            <div className="flex items-center text-sm hover:bg-zinc-100 hover:text-black rounded p-2 my-3 cursor-pointer">
+            <div className="flex items-center  text-sm hover:bg-zinc-100 hover:text-black rounded p-2 my-3 cursor-pointer">
               <span className="mr-3">{item.icon}</span>
               {!isCollapsed && <span>{item.label}</span>}
             </div>

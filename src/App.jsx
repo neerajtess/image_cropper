@@ -1,76 +1,48 @@
-import { useState } from 'react';
-import ReactCrop from 'react-image-crop';
-import 'react-image-crop/dist/ReactCrop.css';
+import { useState } from "react";
+import Header from "./components/Header/Header";
+import Sidebar from "./components/Sidebar/Sidebar";
+import Ads from "./components/Ads/Ads";
+import ImageCompressor from "./pages//ImageCompressor";
+// import BlackNwhite from "./pages/BlackNwhite/BlackNwhite";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 function App() {
-    const [src, setSrc] = useState(null);
-    const [crop, setCrop] = useState({ aspect: 16 / 9 });
-    const [image, setImage] = useState(null);
-    const [output, setOutput] = useState(null);
+  const [isCollapsed, setIsCollapsed] = useState(false); // Only keep isCollapsed state
 
-    const selectImage = (file) => {
-        setSrc(URL.createObjectURL(file));
-    };
+  return (
+    <Router>
+      <div className="min-h-screen bg-zinc-100">
+        {/* Header */}
+        <Header />
 
-    const cropImageNow = () => {
-        const canvas = document.createElement('canvas');
-        const scaleX = image.naturalWidth / image.width;
-        const scaleY = image.naturalHeight / image.height;
-        canvas.width = crop.width;
-        canvas.height = crop.height;
-        const ctx = canvas.getContext('2d');
+        <div className="flex pt-12">
+          {/* Sidebar */}
+          <Sidebar
+            isCollapsed={isCollapsed}
+            setIsCollapsed={setIsCollapsed}
+          />
 
-        const pixelRatio = window.devicePixelRatio;
-        canvas.width = crop.width * pixelRatio;
-        canvas.height = crop.height * pixelRatio;
-        ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
-        ctx.imageSmoothingQuality = 'high';
+          {/* Main Content */}
+          <main
+            className={`flex-1 ml-0   ${
+              isCollapsed ? "ml-16" : "ml-48" // Adjust margin based on isCollapsed
+            } transition-all duration-300 h-screen `}
+          >
+            <Routes>
+              {/* Route for ImageCompressor */}
+              <Route path="/" element={<ImageCompressor />} />
 
-        ctx.drawImage(
-            image,
-            crop.x * scaleX,
-            crop.y * scaleY,
-            crop.width * scaleX,
-            crop.height * scaleY,
-            0,
-            0,
-            crop.width,
-            crop.height,
-        );
+              {/* Route for BlackNwhite */}
+              {/* <Route path="/black-n-white" element={<BlackNwhite />} /> */}
+            </Routes>
 
-        // Converting to base64
-        const base64Image = canvas.toDataURL('image/jpeg');
-        setOutput(base64Image);
-    };
-
-    return (
-        <div className="App">
-            <center>
-                <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => {
-                        selectImage(e.target.files[0]);
-                    }}
-                />
-                <br />
-                <br />
-                <div>
-                    {src && (
-                        <div>
-                            <ReactCrop src={src} onImageLoaded={setImage}
-                                crop={crop} onChange={setCrop} />
-                            <br />
-                            <button onClick={cropImageNow}>Crop</button>
-                            <br />
-                            <br />
-                        </div>
-                    )}
-                </div>
-                <div>{output && <img src={output} />}</div>
-            </center>
+            {/* Advertisement */}
+            {/* <Ads /> */}
+          </main>
         </div>
-    );
+      </div>
+    </Router>
+  );
 }
 
 export default App;

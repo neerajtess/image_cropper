@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 const CropControls = ({
   crop,
@@ -10,9 +10,50 @@ const CropControls = ({
   cropOption,
   imageProperties,
   formatFileSize,
-  imageSrc, // This will be the uploaded image URL
-  onReset, // Reset function passed from the parent component
+  imageSrc,
+  onReset,
+  previewCanvasRef = { current: null }, // Default value for previewCanvasRef
+  completedCrop,
+  imgRef = { current: null }, // Default value for imgRef
 }) => {
+  console.log("CropControls - previewCanvasRef:", previewCanvasRef);
+  console.log("CropControls - imgRef:", imgRef);
+
+  useEffect(() => {
+    console.log("useEffect - previewCanvasRef:", previewCanvasRef);
+    console.log("useEffect - imgRef:", imgRef);
+
+    if (previewCanvasRef.current && imgRef.current && completedCrop) {
+      const canvas = previewCanvasRef.current;
+      const image = imgRef.current;
+
+      const scaleX = image.naturalWidth / image.width;
+      const scaleY = image.naturalHeight / image.height;
+
+      const ctx = canvas.getContext("2d");
+      if (!ctx) {
+        throw new Error("No 2d context");
+      }
+
+      // Set canvas dimensions
+      canvas.width = completedCrop.width * scaleX;
+      canvas.height = completedCrop.height * scaleY;
+
+      // Draw the cropped image on the canvas
+      ctx.drawImage(
+        image,
+        completedCrop.x * scaleX,
+        completedCrop.y * scaleY,
+        completedCrop.width * scaleX,
+        completedCrop.height * scaleY,
+        0,
+        0,
+        completedCrop.width * scaleX,
+        completedCrop.height * scaleY
+      );
+    }
+  }, [completedCrop, previewCanvasRef, imgRef]);
+
   return (
     <div className="h-[100%] w-[100%] md:w-72 rounded-sm p-4 shadow-sm text-[14px]">
       <h2 className="text-xl font-semibold mb-4">Resizing Options</h2>
@@ -24,7 +65,6 @@ const CropControls = ({
           <input
             type="number"
             value={Math.floor(crop.width) || ""}
-
             className="w-full p-1 border rounded outline-none"
             onChange={handleWidthChange}
           />
@@ -34,7 +74,6 @@ const CropControls = ({
           <input
             type="number"
             value={Math.floor(crop.height) || ""}
-
             className="w-full p-1 border rounded outline-none"
             onChange={handleHeightChange}
           />
@@ -65,7 +104,7 @@ const CropControls = ({
             <label className="block text-gray-600 mb-1">Position (X)</label>
             <input
               type="number"
-              value={ Math.floor(crop.x || 0)}
+              value={Math.floor(crop.x || 0)}
               className="w-full p-1 border rounded outline-none"
               onChange={handlePositionXChange}
             />
@@ -74,7 +113,7 @@ const CropControls = ({
             <label className="block text-gray-600 mb-1">Position (Y)</label>
             <input
               type="number"
-              value={ Math.floor(crop.y || "")}
+              value={Math.floor(crop.y || "")}
               className="w-full p-1 border rounded outline-none"
               onChange={handlePositionYChange}
             />
@@ -88,36 +127,22 @@ const CropControls = ({
         <div
           className="w-full h-32 border border-gray-300 rounded overflow-hidden relative"
           style={{
-            backgroundColor: "#f0f0f0", // Background color for the preview box
+            backgroundColor: "#f0f0f0",
           }}
         >
-          {imageSrc && (
-            <div
+          {previewCanvasRef.current && (
+            <canvas
+              ref={previewCanvasRef}
               style={{
-                width: `${crop.width * (200 / imageProperties.width)}px`,
-                height: `${crop.height * (200 / imageProperties.height)}px`,
-                overflow: "hidden",
-                position: "absolute",
-                top: `${crop.y * (200 / imageProperties.height)}px`,
-                left: `${crop.x * (200 / imageProperties.width)}px`,
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
               }}
-            >
-              <img
-                src={imageSrc}
-                alt="Cropped Preview"
-                style={{
-                  width: `${imageProperties.width}px`,
-                  height: `${imageProperties.height}px`,
-                  objectFit: "cover",
-                  transform: `translate(-${crop.x}px, -${crop.y}px)`,
-                }}
-              />
-            </div>
+            ></canvas>
           )}
         </div>
       </div>
 
-      {/* Image Info */}
       <div className="bg-gray-50 p-1 rounded text-[12px]">
         <div className="text-[13px]">
           Current: {Math.round(crop.width || 0)} x {Math.round(crop.height || 0)},{" "}
@@ -129,8 +154,6 @@ const CropControls = ({
           {formatFileSize(imageProperties.size) || "0 Bytes"}, {imageProperties.type || "JPEG"}
         </div>
       </div>
-
-     
     </div>
   );
 };

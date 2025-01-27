@@ -305,7 +305,7 @@ setCrop({ aspect: 5 / 4, width: 0, height: 0, x: 0, y: 0 })
 
   return (
     <div className="h-screen w-full">
-      <div className="w-full h-screen flex gap-3">
+      <div className="w-full h-screen flex mt-1">
         <div className="bg-white rounded-sm ml-1 shadow-sm h-screen w-[300px]">
           <CropControls
             crop={crop}
