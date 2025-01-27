@@ -2,8 +2,8 @@ import { useState } from "react";
 import Header from "./components/Header/Header";
 import Sidebar from "./components/Sidebar/Sidebar";
 import Ads from "./components/Ads/Ads";
-import ImageCompressor from "./pages/ImageCompressor";
-// import BlackNwhite from "./pages/BlackNwhite/BlackNwhite";
+import ImageCompressor from "./pages/ImageCompressor/ImageCompressor";
+import BlackNwhite from "./pages/BlackNwhite/BlackNwhite";
 import Resizer from "./pages/ImageResizer/Resizer";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
@@ -37,7 +37,7 @@ function App() {
               <Route path="/image-resizer" element={<Resizer />} />
 
               {/* Route for BlackNwhite */}
-              {/* <Route path="/black-n-white" element={<BlackNwhite />} /> */}
+              <Route path="/black-n-white" element={<BlackNwhite />} />
             </Routes>
 
             {/* Advertisement */}

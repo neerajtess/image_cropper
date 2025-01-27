@@ -400,7 +400,7 @@ const ImageCompressor = () => {
         </div>
 
         <div className="flex-1">
-          <div className="p-1 border-2 border-dashed border-gray-300 rounded-lg bg-gray-50">
+          <div className="p-1 border-2 border-dashed border-gray-500 rounded-lg bg-gray-50">
             <div className="w-full h-[500px] flex justify-center items-center overflow-hidden">
               {image ? (
                 <ReactCrop
@@ -418,7 +418,7 @@ const ImageCompressor = () => {
                     style={{
                       transform: `scale(${scale}) rotate(${rotate}deg)`,
                       maxWidth: "100%",
-                      maxHeight: "400px",
+                      maxHeight: "500px",
                       objectFit: "contain",
                     }}
                     onLoad={onImageLoad}
@@ -436,7 +436,7 @@ const ImageCompressor = () => {
                       onChange={handleImageUpload}
                       className="hidden"
                     />
-                    <div className="px-4 py-2 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100">
+                    <div className="px-4 py-2 bg-blue-200 text-blue-700 rounded-lg hover:bg-blue-100">
                       Choose File
                     </div>
                   </label>
@@ -447,45 +447,51 @@ const ImageCompressor = () => {
 
           <div className="flex items-center mt-0">
             <div className="flex justify-center gap-4 grow items-center">
-              <div className="group flex flex-col items-center p-2 cursor-pointer" onClick={handleCropClick}>
+              <div className="group flex flex-col items-center p-2 cursor-pointer hover:scale-125 transition-transform select-none active:scale-75" onClick={handleCropClick}>
                 <span className="text-sm opacity-0 group-hover:opacity-100">Crop</span>
                 <LuCrop size={25} />
               </div>
-              <div className="group flex flex-col items-center p-2 cursor-pointer" onClick={handleUndoClick}>
+              <div className="group flex flex-col items-center p-2 cursor-pointer hover:scale-125 transition-transform select-none active:scale-75" onClick={handleUndoClick}>
                 <span className="text-sm opacity-0 group-hover:opacity-100">Undo</span>
                 <TbArrowBackUp size={25} />
               </div>
-              <div className="group flex flex-col items-center p-2 cursor-pointer" onClick={handleRedoClick}>
+              <div className="group flex flex-col items-center p-2 cursor-pointer hover:scale-125 transition-transform select-none active:scale-75" onClick={handleRedoClick}>
                 <span className="text-sm opacity-0 group-hover:opacity-100">Redo</span>
                 <TbArrowForwardUp size={25} />
               </div>
-              <div className="group flex flex-col items-center p-2 cursor-pointer" onClick={handleResetClick}>
+              <div className="group flex flex-col items-center p-2 cursor-pointer hover:scale-125 transition-transform select-none active:scale-75" onClick={handleResetClick}>
                 <span className="text-sm opacity-0 group-hover:opacity-100">Reset</span>
                 <IoReload size={25} />
               </div>
-              <div className="group flex flex-col items-center p-2 cursor-pointer" onClick={onDownloadCropClick}>
+              <div className="group flex flex-col items-center p-2 cursor-pointer hover:scale-125 transition-transform select-none active:scale-75" onClick={onDownloadCropClick}>
                 <span className="text-sm opacity-0 group-hover:opacity-100">Save</span>
                 <FiSave size={25} />
               </div>
-              <div className="group flex flex-col items-center p-2 cursor-pointer" onClick={handleDeleteClick}>
+              <div className="group flex flex-col items-center p-2 cursor-pointer hover:scale-125 transition-transform select-none active:scale-75" onClick={handleDeleteClick}>
                 <span className="text-sm opacity-0 group-hover:opacity-100">Delete</span>
                 <MdDeleteForever size={25} />
               </div>
             </div>
-            <div className="px-10 flex flex-col justify-center items-center">
-              <p className="text-sm font-medium">
-                Current:{" "}
-                <span className="">
-                  {crop ? `${Math.round((crop.width / 100) * naturalDimensions.width)} x ${Math.round((crop.height / 100) * naturalDimensions.height)}` : "0x0"}
-                </span>
-              </p>
-              <p className="text-sm mt-1 font-medium">
-                Original:{" "}
-                <span className="font-medium">
-                  {originalDimensions.width} x {originalDimensions.height}
-                </span>
-              </p>
-            </div>
+            <div className="px-10 flex flex-col justify-center items-center text-zinc-500">
+  {crop && naturalDimensions && crop.width && crop.height ? (
+    <p className="text-sm font-medium">
+      Current:{" "}
+      <span>
+        {`${Math.round((crop.width / 100) * naturalDimensions.width)} x ${Math.round((crop.height / 100) * naturalDimensions.height)}`}
+      </span>
+    </p>
+  ) : null}
+
+  {originalDimensions && originalDimensions.width && originalDimensions.height ? (
+    <p className="text-sm mt-1 font-medium">
+      Original:{" "}
+      <span className="font-medium">
+        {originalDimensions.width} x {originalDimensions.height}
+      </span>
+    </p>
+  ) : null}
+</div>
+
           </div>
         </div>
       </div>
