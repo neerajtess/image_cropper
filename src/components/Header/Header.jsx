@@ -12,7 +12,7 @@ const Header = () => {
   };
 
   return (
-    <header className="bg-gradient-to-r from-blue-400 to-blue-600 text-white py-2 px-4 md:px-12 lg:px-48 flex justify-between items-center fixed top-0 left-0 w-full z-50 shadow-lg">
+    <header className="bg-gradient-to-r from-blue-400 to-blue-600 text-white py-2 px-2  flex justify-between items-center fixed top-0 left-0 w-full z-50 shadow-lg">
       <div className="text-sm font-bold sm:text-xl">
         JPEG Compressor.com
       </div>

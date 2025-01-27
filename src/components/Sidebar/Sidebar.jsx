@@ -13,7 +13,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
   const menuItems = [
     { icon: <SiConvertio />, label: "Image Convert", link: "/" },
     { icon: <IoInvertModeOutline />, label: "Black/White", link: "/black-n-white" },
-    { icon: <IoMdResize />, label: "Image Resize", link: "/resize" },
+    { icon: <IoMdResize />, label: "Image Resize", link: "/image-resizer" },
     { icon: <LuCrop />, label: "Image Crop", link: "/crop" },
     { icon: <PiFlipHorizontalFill />, label: "Image Flip", link: "/flip" },
     { icon: <MdRotate90DegreesCw />, label: "Image Rotate", link: "/rotate" },
