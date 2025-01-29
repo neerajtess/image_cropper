@@ -8,6 +8,11 @@ import { canvasPreview } from "./canvasPreview";
 import { useDebounceEffect } from "./useDebounceEffect";
 import "react-image-crop/dist/ReactCrop.css";
 import { MdDeleteForever } from "react-icons/md";
+import { IoMdResize } from "react-icons/io";
+
+import { Link } from "react-router-dom";
+
+
 
 function centerAspectCrop(mediaWidth, mediaHeight, aspect) {
   return centerCrop(
@@ -25,7 +30,7 @@ function centerAspectCrop(mediaWidth, mediaHeight, aspect) {
   );
 }
 
-const ImageCompressor = () => {
+const ImageCropper = () => {
   const [image, setImage] = useState(null);
   const [crop, setCrop] = useState();
   const [completedCrop, setCompletedCrop] = useState();
@@ -190,10 +195,10 @@ const ImageCompressor = () => {
     const image = imgRef.current;
     const offscreen = new OffscreenCanvas(image.naturalWidth, image.naturalHeight);
     const ctx = offscreen.getContext("2d");
-    
+
     ctx.drawImage(image, 0, 0);
     const blob = await offscreen.convertToBlob({ type: "image/png" });
-    
+
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
     link.download = "image.png";
@@ -250,9 +255,9 @@ const ImageCompressor = () => {
   return (
     <div className="p-2">
       <div className="flex gap-1">
-        <div className="flex flex-col pr-2 max-w-[300px]">
+        <div className="flex flex-col pr-2  w-1/5">
           <div className="bg-gray-100 w-full p-3 rounded-lg shadow-md">
-            <h2 className="text-lg font-semibold mb-4">Resizing Options</h2>
+            <h2 className="text-lg font-semibold mb-4">Cropping Options</h2>
 
             <div className="flex gap-4 mb-4">
               <div className="flex-1">
@@ -329,7 +334,7 @@ const ImageCompressor = () => {
                   setAspect(newAspect || undefined);
                   if (imgRef.current) {
                     const { width, height } = imgRef.current;
-                    let newCrop = isNaN(newAspect) 
+                    let newCrop = isNaN(newAspect)
                       ? { unit: "%", width: 100, height: 100, x: 0, y: 0 }
                       : centerAspectCrop(width, height, newAspect);
                     setCrop(newCrop);
@@ -341,19 +346,22 @@ const ImageCompressor = () => {
                 <option value={16 / 9}>16:9</option>
                 <option value={4 / 3}>4:3</option>
                 <option value={1}>1:1</option>
+
               </select>
             </div>
 
             <div className="mb-2">
-              <h3 className="text-sm font-medium text-gray-700">Crop Position</h3>
+
               <table className="mt-3 w-full ">
                 <tbody>
                   <tr className="flex gap-4">
                     <td>
+                      <label htmlFor="" className="block text-sm font-medium text-gray-700">x - Position</label>
                       <input
                         type="number"
                         className="w-full p-2 border border-gray-300 rounded-md outline-none"
                         value={crop ? Math.round((crop.x / 100) * naturalDimensions.width) : ""}
+                        placeholder="X Position"
                         onChange={(e) => {
                           const newX = parseInt(e.target.value, 10) || 0;
                           if (!isNaN(newX) && imgRef.current) {
@@ -371,10 +379,12 @@ const ImageCompressor = () => {
                       />
                     </td>
                     <td>
+                      <label htmlFor="" className="block text-sm font-medium text-gray-700">Y - Position</label>
                       <input
                         type="number"
                         className="w-full p-2 border border-gray-300 rounded-md outline-none"
                         value={crop ? Math.round((crop.y / 100) * naturalDimensions.height) : ""}
+                        placeholder="Y Position"
                         onChange={(e) => {
                           const newY = parseInt(e.target.value, 10) || 0;
                           if (!isNaN(newY) && imgRef.current) {
@@ -401,29 +411,42 @@ const ImageCompressor = () => {
 
         <div className="flex-1">
           <div className="p-1 border-2 border-dashed border-gray-500 rounded-lg bg-gray-50">
-            <div className="w-full h-[500px] flex justify-center items-center overflow-hidden">
+            <div className="w-full h-[500px] flex justify-center items-center overflow-hidden relative">
               {image ? (
-                <ReactCrop
-                  crop={crop}
-                  onChange={(_, percentCrop) => setCrop(percentCrop)}
-                  onComplete={(c) => setCompletedCrop(c)}
-                  aspect={aspect}
-                  minWidth={imgRef.current?.clientWidth * 0.05 || 50}
-                  minHeight={imgRef.current?.clientHeight * 0.05 || 50}
-                >
-                  <img
-                    ref={imgRef}
-                    alt="Uploaded"
-                    src={image}
-                    style={{
-                      transform: `scale(${scale}) rotate(${rotate}deg)`,
-                      maxWidth: "100%",
-                      maxHeight: "500px",
-                      objectFit: "contain",
-                    }}
-                    onLoad={onImageLoad}
-                  />
-                </ReactCrop>
+                <>
+                  <ReactCrop
+                    crop={crop}
+                    onChange={(_, percentCrop) => setCrop(percentCrop)}
+                    onComplete={(c) => setCompletedCrop(c)}
+                    aspect={aspect}
+                    minWidth={imgRef.current?.clientWidth * 0.05 || 50}
+                    minHeight={imgRef.current?.clientHeight * 0.05 || 50}
+                  >
+                    <img
+                      ref={imgRef}
+                      alt="Uploaded"
+                      src={image}
+                      style={{
+                        transform: `scale(${scale}) rotate(${rotate}deg)`,
+                        maxWidth: "100%",
+                        maxHeight: "500px",
+                        objectFit: "contain",
+                      }}
+                      onLoad={onImageLoad}
+                    />
+                  </ReactCrop>
+                  {/* Preview Canvas */}
+                  <div className="absolute top-4 right-4 w-32 h-32 border border-gray-300 rounded-md overflow-hidden bg-white z-10">
+                    <canvas
+                      ref={previewCanvasRef}
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "contain",
+                      }}
+                    />
+                  </div>
+                </>
               ) : (
                 <div className="text-center">
                   <label className="cursor-pointer">
@@ -445,8 +468,38 @@ const ImageCompressor = () => {
             </div>
           </div>
 
-          <div className="flex items-center mt-0">
-            <div className="flex justify-center gap-4 grow items-center">
+          <div className="flex items-center w-full mt-0">
+
+            <div className="px-10 flex flex-col justify-center  items-start text-zinc-500 w-2/6">
+              {crop && naturalDimensions && crop.width && crop.height ? (
+                <p className="text-sm font-medium">
+                  Current:{" "}
+                  <span>
+                    {`${Math.round((crop.width / 100) * naturalDimensions.width)} x ${Math.round((crop.height / 100) * naturalDimensions.height)}`}
+                  </span>
+                </p>
+              ) : null}
+
+              {originalDimensions && originalDimensions.width && originalDimensions.height ? (
+                <p className="text-sm mt-1 font-medium">
+                  Original:{" "}
+                  <span className="font-medium">
+                    {originalDimensions.width} x {originalDimensions.height}
+                  </span>
+                </p>
+              ) : null}
+            </div>
+
+
+
+            <div className="flex  gap-4  grow items-start ">
+              <Link to="/image-resizer">
+                <div className="group flex flex-col items-center p-2 cursor-pointer hover:scale-125 transition-transform select-none active:scale-75" >
+                  <span className="text-sm opacity-0 group-hover:opacity-100">Resize</span>
+                  <IoMdResize size={25} />
+                </div>
+              </Link>
+
               <div className="group flex flex-col items-center p-2 cursor-pointer hover:scale-125 transition-transform select-none active:scale-75" onClick={handleCropClick}>
                 <span className="text-sm opacity-0 group-hover:opacity-100">Crop</span>
                 <LuCrop size={25} />
@@ -472,25 +525,11 @@ const ImageCompressor = () => {
                 <MdDeleteForever size={25} />
               </div>
             </div>
-            <div className="px-10 flex flex-col justify-center items-center text-zinc-500">
-  {crop && naturalDimensions && crop.width && crop.height ? (
-    <p className="text-sm font-medium">
-      Current:{" "}
-      <span>
-        {`${Math.round((crop.width / 100) * naturalDimensions.width)} x ${Math.round((crop.height / 100) * naturalDimensions.height)}`}
-      </span>
-    </p>
-  ) : null}
 
-  {originalDimensions && originalDimensions.width && originalDimensions.height ? (
-    <p className="text-sm mt-1 font-medium">
-      Original:{" "}
-      <span className="font-medium">
-        {originalDimensions.width} x {originalDimensions.height}
-      </span>
-    </p>
-  ) : null}
-</div>
+
+
+
+
 
           </div>
         </div>
@@ -499,4 +538,8 @@ const ImageCompressor = () => {
   );
 };
 
-export default ImageCompressor;
+export default ImageCropper;
+
+
+
+

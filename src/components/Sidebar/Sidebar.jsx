@@ -11,10 +11,10 @@ import { Link } from "react-router-dom";
 
 const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
   const menuItems = [
-    { icon: <SiConvertio />, label: "Image Convert", link: "/" },
+    { icon: <SiConvertio />, label: "Image Convert", link: "/convert" },
     { icon: <IoInvertModeOutline />, label: "Black/White", link: "/black-n-white" },
     { icon: <IoMdResize />, label: "Image Resize", link: "/image-resizer" },
-    { icon: <LuCrop />, label: "Image Crop", link: "/crop" },
+    { icon: <LuCrop />, label: "Image Crop", link: "/" },
     { icon: <PiFlipHorizontalFill />, label: "Image Flip", link: "/flip" },
     { icon: <MdRotate90DegreesCw />, label: "Image Rotate", link: "/rotate" },
     { icon: <MdOutlineInvertColors />, label: "Image Invert", link: "/invert" },
